@@ -11,7 +11,7 @@ module.exports = (app) => {
         pagamento.data = new Date();
 
         var connection = app.persistencia.connectionFactory()
-        var pagamentoDao = new app.persistencia.PagamentoDao()
+        var pagamentoDao = new app.persistencia.PagamentoDao(connetion)
         pagamentoDao.salva(pagamento, (erro, resultado)=> {
             console.log('Pagamento criado');
             resp.json(pagamento)
