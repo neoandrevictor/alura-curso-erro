@@ -4,18 +4,31 @@ module.exports = (app) => {
         resp.send('OK')
     })
 
-    app.post('/pagamentos/pagamento', (req, resp) => {
-        var pagamento = req.body
-        console.log('Recebido pagamento');
-        pagamento.status = 'Criado'
-        pagamento.data = new Date();
+    app.post('/pagamentos/pagamento', function(req, res){
 
-        var connection = app.persistencia.connectionFactory()
-        var pagamentoDao = new app.persistencia.PagamentoDao(connetion)
-        pagamentoDao.salva(pagamento, (erro, resultado)=> {
-            console.log('Pagamento criado');
-            resp.json(pagamento)
-        })
-        resp.send(pagamento)
-    })
+ 
+
+        var pagamento = req.body;
+        console.log('processando uma requisicao de um novo pagamento');
+    
+        pagamento.status = 'CRIADO';
+        pagamento.data = new Date;
+    
+        var connection = app.persistencia.connectionFactory();
+        var pagamentoDao = new app.persistencia.PagamentoDao(connection);
+    
+        pagamentoDao.salva(pagamento, function(erro, resultado){
+          if(erro){
+            console.log('Erro ao inserir no banco:' + erro);
+            res.status(500).send(erro);
+          } else {
+          console.log('pagamento criado');
+          res.location('/pagamentos/pagamento/' +
+                resultado.insertId);
+    
+          res.status(201).json(pagamento);
+        }
+        });
+    
+      });
 }
